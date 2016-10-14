@@ -36,10 +36,27 @@ body > p:nth-child(3) {
     margin: 0 0 .5em 0;
 }
 
-.dice span {
+.nr {
     display: inline-block;
     width: 75%;
     height: 75%;
+    font-size: 5em;
+}
+
+#result {
+    font-size: 2em;
+}
+
+.red {
+    color: firebrick;
+}
+
+.green {
+    color: forestgreen;
+}
+
+.hidden {
+    display: none;
 }
 
 button {
