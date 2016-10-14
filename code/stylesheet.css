@@ -1,0 +1,52 @@
+* {
+    font-family: 'calibri';
+    text-align: center;
+}
+
+body {
+    width: 60%;
+    margin: 0 auto;
+}
+
+body > p {
+    display: inline-block;
+    margin: 2em;
+    padding: 1em;
+    border: 1px solid grey;
+}
+
+body > p:nth-child(2) {
+    width: 100px;
+}
+
+body > p:nth-child(3) {
+    width: 200px;
+}
+
+.dice {
+    display: inline-block;
+    padding: 1em;
+    margin: 1em;
+    border: 1px solid grey;
+    width: 150px;
+    height: 200px;
+}
+
+.dice p {
+    margin: 0 0 .5em 0;
+}
+
+.dice span {
+    display: inline-block;
+    width: 75%;
+    height: 75%;
+}
+
+button {
+    background-color: lightgray;
+    border: 1px solid grey;
+    padding: 1em;
+    margin: 2em;
+    cursor: pointer;
+    font-size: 1em;
+}
