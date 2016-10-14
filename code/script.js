@@ -1,30 +1,34 @@
 
-// --------------------------------------- CLASSES
+// --------------------------------------- CLASSES --------------------------------------- 
 
 var Observable = function() {
 
+    //create reference to this
     var _self = this;
 
     _self.data;               //contains data
-    _self.subscribers = [];   //all callback functions
+    _self.subscribers = [];   //contains all callback functions
 
     _self.publish = function() {
+        //loops through all subscribed functions and executes them
         for (var i in _self.subscribers) {
             _self.subscribers[i]();
         }
     }
 
     _self.subscribe = function(callback) {
+        //adds functino to subscribers array
         _self.subscribers.push(callback);
     }
 
-//    _self.unsubscribe = function(callback) {
-//        for (var subscriberKey in _self.subscribers) {
-//            if(_self.subscribers[subscriberKey] == callback) {
-//                // delete _.self.subscribers...
-//            }
-//        }
-//    }
+    _self.unsubscribe = function(callback) {
+        //loops through all subscribed functions and removes the callback
+        for (var i in _self.subscribers) {
+            if(_self.subscribers[i] == callback) {
+                 _self.subscribers.splice(i, 1);
+            }
+        }
+    }
         
 }
 
@@ -32,19 +36,18 @@ var Game = function() {
     
     var _self = this;
     
-    _self.count = 0;
+    _self.count     = 0;
+    _self.score     = 0;
     
     // html elements
+    var counter = document.getElementById('throws');
     var hidden      = document.getElementById('result');
     var throwBtn    = document.getElementById('throwBtn');
+    var scores      = document.getElementsByClassName('score');
     
     _self.updateCount = function(val) {
-
-        var counter = document.getElementById('throws');
-
-        if(val) {
+        if(val == 'reset') {
             _self.count = 0;
-            console.log("counter reset");
         }
 
         counter.innerHTML = _self.count;
@@ -54,40 +57,72 @@ var Game = function() {
         }
     }
     
+    _self.updateScore = function(value) {
+        if(value == 'reset') {
+            total = 0;
+            for (var i=0 ; i<scores.length ; i++) {
+                scores[i].innerHTML = total;
+            }
+
+        } else {
+            _self.score = value;
+            
+            for (var i=0 ; i<scores.length ; i++) {
+                scores[i].innerHTML = value;
+            }
+        }
+    }
+    
     _self.endGame = function() {
+        var resultText  = document.querySelector('#result p');
+        console.log(_self.score);
+        
+        if(_self.score > 9) {
+            resultText.setAttribute('class', 'green');
+        } else {
+            resultText.setAttribute('class', 'red');
+        }
+        
         hidden.setAttribute('class', '');
         throwBtn.disabled = true;
     }
     
     _self.restart = function() {
-        _self.updateCount(true);
+        _self.updateCount('reset');
+        _self.updateScore('reset');
         throwBtn.disabled = false;
         hidden.setAttribute('class', 'hidden');
     }
     
 }
 
-// --------------------------------------- GLOBAL VARIABLES
+// --------------------------------------- GLOBAL VARIABLES --------------------------------------- 
 
 dice        = new Observable();
 yahtzee     = new Game();
 
-// --------------------------------------- FUNCTIONS
+// --------------------------------------- FUNCTIONS --------------------------------------- 
 
 function throwDices() {
     var diceNrs     = document.getElementsByClassName('nr');
-    var diceNrsLen  = diceNrs.length;
-    var scores      = document.getElementsByClassName('score');
     var total       = 0;
     
-    for (var i=0; i<diceNrsLen; i++) {
+    //loop thru dices, assign random number to each one
+    for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
         var randomNr = Math.floor(Math.random() * 6 ) + 1;
         diceNrs[i].innerHTML = randomNr;
         total += randomNr;
     }
     
-    for (var i=0 ; i<scores.length ; i++) {
-        scores[i].innerHTML = total;
+    yahtzee.updateScore(total);
+}
+
+function resetDices() {
+    var diceNrs     = document.getElementsByClassName('nr');
+    
+    for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
+        var randomNr = Math.floor(Math.random() * 6 ) + 1;
+        diceNrs[i].innerHTML = '';
     }
 }
 
@@ -99,7 +134,7 @@ function setCounter() {
 dice.subscribe(throwDices);
 dice.subscribe(setCounter);
 
-// --------------------------------------- EVENT LISTENERS
+// --------------------------------------- EVENT LISTENERS --------------------------------------- 
 
 var throwBtn    = document.getElementById('throwBtn');
 var helpBtn     = document.getElementById('helpBtn');
@@ -109,4 +144,7 @@ throwBtn.addEventListener('click', function() {
     dice.publish();
 });
 
-restartBtn.addEventListener('click', yahtzee.restart);
+restartBtn.addEventListener('click', function() {
+    yahtzee.restart();
+    resetDices();
+});
