@@ -151,27 +151,44 @@ function setCounter() {
     yahtzee.updateCount();
 }
 
+function help() {
+    var $helpDiv    = $('#helpDiv');
+    var $body       = $('body');
+    
+    $helpDiv.toggleClass('hidden');
+    $body.toggleClass('overlay');
+}
+
 dice.subscribe(throwDices);
 dice.subscribe(setCounter);
 
 // --------------------------------------- EVENT LISTENERS --------------------------------------- 
 
-var throwBtn    = document.getElementById('throwBtn');
-var helpBtn     = document.getElementById('helpBtn');
-var restartBtn  = document.getElementById('restartBtn');
-var allDices    = document.getElementsByClassName('dice');
+var $throwBtn    = $('#throwBtn');
+var $restartBtn  = $('#restartBtn');
+var $helpBtn     = $('#helpBtn');
+var $okBtn       = $('#okBtn');
+var $allDices    = $('.dice');
         
-throwBtn.addEventListener('click', function() {
+$throwBtn.click(function() {
     dice.publish();
 });
 
-restartBtn.addEventListener('click', function() {
+$restartBtn.click(function() {
     yahtzee.restart();
     resetDices();
 });
 
-for(var i=0, ilen=allDices.length ; i<ilen ; i++) {
-    allDices[i].addEventListener('click', function() {
+$helpBtn.click(function() {
+    help();
+});
+
+$okBtn.click(function() {
+    help();
+});
+
+for(var i=0, ilen=$allDices.length ; i<ilen ; i++) {
+    $allDices[i].addEventListener('click', function() {
         diceID = event.currentTarget.getAttribute('id');
         lockDice(diceID);
     })

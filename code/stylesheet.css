@@ -1,3 +1,5 @@
+/* ------------------ GENERAL ------------------  */
+
 * {
     font-family: 'calibri';
     text-align: center;
@@ -6,7 +8,14 @@
 body {
     width: 60%;
     margin: 0 auto;
+    position: relative;
 }
+
+.hidden {
+    display: none;
+}
+
+/* ------------------ SCORE AND COUNTER ------------------  */
 
 body > p {
     display: inline-block;
@@ -22,6 +31,8 @@ body > p:nth-child(2) {
 body > p:nth-child(3) {
     width: 200px;
 }
+
+/* ------------------ DICES ------------------  */
 
 .dice {
     display: inline-block;
@@ -44,6 +55,26 @@ body > p:nth-child(3) {
     font-size: 5em;
 }
 
+.locked {
+    background-color: lavender;
+}
+
+button, .button {
+    background-color: lightgray;
+    border: 1px solid grey;
+    padding: 1em;
+    margin: 2em;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.button {
+    text-decoration: none;
+    color: black;
+}
+
+/* ------------------ RESULT ------------------  */
+
 #result {
     font-size: 2em;
 }
@@ -56,19 +87,40 @@ body > p:nth-child(3) {
     color: forestgreen;
 }
 
-.locked {
-    background-color: lavender;
-}
+/* ------------------ HELP ------------------  */
 
-.hidden {
-    display: none;
-}
-
-button {
-    background-color: lightgray;
+#helpDiv {
+    position: absolute;
+    width: 40%;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
     border: 1px solid grey;
-    padding: 1em;
-    margin: 2em;
-    cursor: pointer;
-    font-size: 1em;
+    background-color: white;
+    z-index: 10;
+}
+
+#helpDiv ol {
+    width: 60%;
+    margin: 2em auto;
+}
+
+#helpDiv p {
+    text-align: left;
+    margin-left: 25%;
+    font-weight: bold;
+}
+
+#helpDiv button {
+    margin-top: .5em;
+}
+
+.overlay {
+    background-color: lightgray;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    opacity: .5;
 }
