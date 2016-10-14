@@ -75,7 +75,6 @@ var Game = function() {
     
     _self.endGame = function() {
         var resultText  = document.querySelector('#result p');
-        console.log(_self.score);
         
         if(_self.score > 9) {
             resultText.setAttribute('class', 'green');
@@ -104,14 +103,20 @@ yahtzee     = new Game();
 // --------------------------------------- FUNCTIONS --------------------------------------- 
 
 function throwDices() {
-    var diceNrs     = document.getElementsByClassName('nr');
-    var total       = 0;
+    var $allDices       = $('.nr');
+    var $unlockedDices  = $('.unlocked .nr');
+    var total           = 0;
     
-    //loop thru dices, assign random number to each one
-    for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
+    //loop thru unlocked dices, assign random number
+    for (var i=0, ilen=$unlockedDices.length ; i<ilen; i++) {
         var randomNr = Math.floor(Math.random() * 6 ) + 1;
-        diceNrs[i].innerHTML = randomNr;
-        total += randomNr;
+        $unlockedDices[i].innerHTML = randomNr;
+    }
+    
+    //loop thru all dices, calculate total value
+    for (var i=0, ilen=$allDices.length ; i<ilen; i++) {
+        value = parseInt($allDices[i].innerHTML);
+        total += value;
     }
     
     yahtzee.updateScore(total);
@@ -119,10 +124,25 @@ function throwDices() {
 
 function resetDices() {
     var diceNrs     = document.getElementsByClassName('nr');
+    var $dices      = $('.dice');
     
     for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
-        var randomNr = Math.floor(Math.random() * 6 ) + 1;
+        $dices[i].setAttribute('class', 'dice unlocked');
         diceNrs[i].innerHTML = '';
+    }
+}
+
+function lockDice(diceID) {
+    var $clickedDice = $("#" + diceID);
+    
+    if(yahtzee.count != 0 && yahtzee.count != 3) {
+        if($clickedDice.hasClass('locked')) {
+            $clickedDice.removeClass('locked');
+            $clickedDice.addClass('unlocked');
+        } else {
+            $clickedDice.addClass('locked');
+            $clickedDice.removeClass('unlocked');
+        }
     }
 }
 
@@ -139,6 +159,7 @@ dice.subscribe(setCounter);
 var throwBtn    = document.getElementById('throwBtn');
 var helpBtn     = document.getElementById('helpBtn');
 var restartBtn  = document.getElementById('restartBtn');
+var allDices    = document.getElementsByClassName('dice');
         
 throwBtn.addEventListener('click', function() {
     dice.publish();
@@ -148,3 +169,10 @@ restartBtn.addEventListener('click', function() {
     yahtzee.restart();
     resetDices();
 });
+
+for(var i=0, ilen=allDices.length ; i<ilen ; i++) {
+    allDices[i].addEventListener('click', function() {
+        diceID = event.currentTarget.getAttribute('id');
+        lockDice(diceID);
+    })
+}

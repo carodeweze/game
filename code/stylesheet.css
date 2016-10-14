@@ -30,6 +30,7 @@ body > p:nth-child(3) {
     border: 1px solid grey;
     width: 150px;
     height: 200px;
+    cursor: pointer;
 }
 
 .dice p {
@@ -53,6 +54,10 @@ body > p:nth-child(3) {
 
 .green {
     color: forestgreen;
+}
+
+.locked {
+    background-color: lavender;
 }
 
 .hidden {
