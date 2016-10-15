@@ -90,16 +90,17 @@ button, .button {
 /* ------------------ HELP ------------------  */
 
 #helpDiv {
+    background-color: white;
+    border: 1px solid grey;
     position: absolute;
     width: 40%;
     top: 250px;
+    z-index: 10;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
-    border: 1px solid grey;
-    background-color: white;
-    z-index: 10;
+    box-shadow: 0px 0px 20px grey;
 }
 
 #helpDiv ol {
@@ -115,12 +116,4 @@ button, .button {
 
 #helpDiv button {
     margin-top: .5em;
-}
-
-.overlay {
-    background-color: lightgray;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    opacity: .5;
 }

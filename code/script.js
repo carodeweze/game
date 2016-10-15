@@ -156,7 +156,6 @@ function help() {
     var $body       = $('body');
     
     $helpDiv.toggleClass('hidden');
-    $body.toggleClass('overlay');
 }
 
 dice.subscribe(throwDices);
