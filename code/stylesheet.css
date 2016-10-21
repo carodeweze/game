@@ -5,30 +5,48 @@
     text-align: center;
 }
 
+html, body {
+    min-height: 100%;
+}
+
 body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.container {
     width: 60%;
     margin: 0 auto;
-    position: relative;
 }
 
 .hidden {
     display: none;
 }
 
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
 /* ------------------ SCORE AND COUNTER ------------------  */
 
-body > p {
+.container > p {
     display: inline-block;
     margin: 2em;
     padding: 1em;
     border: 1px solid grey;
 }
 
-body > p:nth-child(2) {
+.container > p:nth-child(2) {
     width: 100px;
 }
 
-body > p:nth-child(3) {
+.container > p:nth-child(3) {
     width: 200px;
 }
 
@@ -39,8 +57,8 @@ body > p:nth-child(3) {
     padding: 1em;
     margin: 1em;
     border: 1px solid grey;
-    width: 150px;
-    height: 200px;
+    width: 125px;
+    height: 150px;
     cursor: pointer;
 }
 
@@ -76,7 +94,11 @@ button, .button {
 /* ------------------ RESULT ------------------  */
 
 #result {
-    font-size: 2em;
+    font-size: 1.5em;
+}
+
+#result button {
+    margin: .5em;
 }
 
 .red {
@@ -85,6 +107,30 @@ button, .button {
 
 .green {
     color: forestgreen;
+}
+
+/* ------------------ SCORE SHEET ------------------  */
+
+#scoreSheet {
+    border-collapse: collapse;
+    margin: 2em auto 0 auto;
+}
+
+#scoreSheet td {
+    border: 1px solid grey;
+    width: 100px;
+    padding: 5px;
+}
+
+#scoreSheet p {
+    font-size: 1.2em;
+    margin: .5em;
+    text-align: left;
+    border-bottom: 1px solid grey;
+}
+
+#scoreSheet span {
+    text-align: right;
 }
 
 /* ------------------ HELP ------------------  */
@@ -100,7 +146,6 @@ button, .button {
     margin-right: auto;
     left: 0;
     right: 0;
-    box-shadow: 0px 0px 20px grey;
 }
 
 #helpDiv ol {

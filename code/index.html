@@ -7,53 +7,114 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
-    
-    <h1>Yahtzee</h1>
-    
-    <p>Score: <span class="score">0</span></p>
-    <p>Number of Throws: <span id="throws">0</span></p>
-    
-    <div id="dice_container">
-        <div class="dice unlocked" id="dice1">
-            <p>Dice 1</p>
-            <span class="nr"></span>
+    <div id="overlayDiv"></div>
+
+    <div class="container">
+        <h1>Yahtzee</h1>
+        
+        <p>Score: <span class="score">0</span></p>
+        <p>Number of Throws: <span id="throws">0</span></p>
+        
+        <div id="dice_container">
+            <div class="dice unlocked" id="dice1">
+                <p>Dice 1</p>
+                <span class="nr"></span>
+            </div>
+
+            <div class="dice unlocked" id="dice2">
+                <p>Dice 2</p>
+                <span class="nr"></span>
+            </div>
+
+            <div class="dice unlocked" id="dice3">
+                <p>Dice 3</p>
+                <span class="nr"></span>
+            </div>
+
+            <div class="dice unlocked" id="dice4">
+                <p>Dice 4</p>
+                <span class="nr"></span>
+            </div>
+            
+            <div class="dice unlocked" id="dice5">
+                <p>Dice 5</p>
+                <span class="nr"></span>
+            </div>
+            
+        </div>
+        
+        <div id="result" class="hidden">
+            <p>Your total score is <span class="score">0</span>.</p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        
+        <div id="btns">
+            <button id="throwBtn">Throw!</button>
+            <button id="helpBtn">Help</button>
         </div>
 
-        <div class="dice unlocked" id="dice2">
-            <p>Dice 2</p>
-            <span class="nr"></span>
-        </div>
 
-        <div class="dice unlocked" id="dice3">
-            <p>Dice 3</p>
-            <span class="nr"></span>
-        </div>
+        <table id="scoreSheet">
+            <tr>
+                <td>Aces</td>
+                <td id="aces" class="tableScore"></td>
+                <td>3 of a kind</td>
+                <td id="threeOfAKind" class="tableScore"></td>
+            </tr>
+
+            <tr>
+                <td>Twos</td>
+                <td id="twos" class="tableScore"></td>
+                <td>4 of a kind</td>
+                <td id="fourOfAKind" class="tableScore"></td>
+            </tr>
+
+            <tr>
+                <td>Threes</td>
+                <td id="threes" class="tableScore"></td>
+                <td>Full House</td>
+                <td id="fullHouse" class="tableScore"></td>
+            </tr>
+            
+            <tr>
+                <td>Fours</td>
+                <td id="fours" class="tableScore"></td>
+                <td>Small Straight</td>
+                <td id="smallStraight" class="tableScore"></td>
+            </tr>
+            
+            <tr>
+                <td>Fives</td>
+                <td id="fives" class="tableScore"></td>
+                <td>Large Straight</td>
+                <td id="largeStraight" class="tableScore"></td>
+            </tr>
+            
+            <tr>
+                <td>Sixes</td>
+                <td id="sixes" class="tableScore"></td>
+                <td>Yahtzee</td>
+                <td id="yahtzee" class="tableScore"></td>
+            </tr>
+        </table>
+        
+        <!-- ---------- HELP (opens on click) ---------- -->
+        
+            <div id="helpDiv" class="hidden">
+                <h2>How To Play Yahtzee</h2>
+                <ol>
+                    <li>Hit the 'Throw!' button.</li>
+                    <li>Click on a dice to keep it.</li>
+                    <li>You can throw 3 times.</li>
+                    <li>Your score is shown, try to beat it!</li>
+                </ol>
+                <p>Still not sure?</p>
+                <a href="https://i.ytimg.com/vi/hf-jObPaSDM/hqdefault.jpg" target="_blank" class="button">Ask The Internet</a>
+                <button id="okBtn">Got it!</button>
+            </div>
+        
+        <!-- ----------  ----------  ---------- -->
     </div>
-    
-    <div id="result" class="hidden">
-        <p>Your total score is <span class="score">0</span>.</p>
-        <button id="restartBtn">Play Again</button>
-    </div>
-    
-    <button id="throwBtn">Throw!</button>
-    <button id="helpBtn">Help</button>
-    
-    <!-- ---------- HELP (opens on click) ---------- -->
-    
-        <div id="helpDiv" class="hidden">
-            <h2>How To Play Yahtzee</h2>
-            <ol>
-                <li>Hit the 'Throw!' button.</li>
-                <li>Click on a dice to keep it.</li>
-                <li>You can throw 3 times.</li>
-                <li>Your score is shown, try to beat it!</li>
-            </ol>
-            <p>Still not sure?</p>
-            <a href="https://i.ytimg.com/vi/hf-jObPaSDM/hqdefault.jpg" target="_blank" class="button">Ask The Internet</a>
-            <button id="okBtn">Got it!</button>
-        </div>
-    
-    <!-- ----------  ----------  ---------- -->
     
     <script src="script.js"></script>
     
