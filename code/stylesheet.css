@@ -73,7 +73,7 @@ body {
     font-size: 5em;
 }
 
-.locked {
+.locked, .lockedS, .set {
     background-color: lavender;
 }
 

@@ -30,7 +30,6 @@ var Observable = function() {
             }
         }
     }
-        
 }
 
 var Game = function() {
@@ -41,11 +40,17 @@ var Game = function() {
     _self.score     = 0;
     
     // html elements
-    var counter     = document.getElementById('throws');
-    var hidden      = document.getElementById('result');
-    var $buttonDiv  = $('#btns');
-    var throwBtn    = document.getElementById('throwBtn');
-    var scores      = document.getElementsByClassName('score');
+    var counter         = document.getElementById('throws');
+    var $resultEl       = $('#result');
+    var $continueInfo   = $('#continueInfo');
+    var $continueP      = $('#continueP');
+    var $continueEl     = $('#continue');
+    var $buttonDiv      = $('#btns');
+    var throwBtn        = document.getElementById('throwBtn');
+    var scores          = document.getElementsByClassName('score');
+    var diceNrs         = document.getElementsByClassName('nr');
+    var $dices          = $('.dice');
+    var $tableScores    = $('.tableScore');
     
     _self.updateCount = function(val) {
         if(val == 'reset') {
@@ -55,22 +60,86 @@ var Game = function() {
         counter.innerHTML = _self.count;
         
         if(_self.count == 3) {
-            _self.endGame();
+            _self.pause();
         }
     }
     
     _self.updateScore = function(value) {
+        //set all html score elements to 0
         if(value == 'reset') {
-            total = 0;
             for (var i=0 ; i<scores.length ; i++) {
-                scores[i].innerHTML = total;
+                scores[i].innerHTML = 0;
+            }
+        }
+        else {
+            var lockedScores    = [];
+            var setScores       = [];
+            var lockedScoreEl   = document.getElementsByClassName('lockedS');
+            var setScoresEl     = document.getElementsByClassName('set');
+
+            lockedScores.push(lockedScoreEl[0]);
+
+            if(setScoresEl.length > 0) {
+                for (var i = 0; i < setScoresEl.length; i++) {
+                    setScores.push(setScoresEl[i]);
+                }
             }
 
-        } else {
-            _self.score = value;
-            
+            //calculate sum of all locked/set score elements and assign sum to html elements
+            if(setScores.length > 0) {
+                var allScores   = lockedScores.concat(setScores);
+                for (var i = 0; i < allScores.length; i++) {
+                    allScores[i] = allScores[i].innerHTML;
+                    allScores[i] = parseInt(allScores[i]);
+                }
+                var tempSum     = allScores.reduce(function(a, b) { return a+b; }, 0);
+                _self.score     = tempSum;
+            }
+            else {
+                _self.score = $('.lockedS').html();
+            }
+
             for (var i=0 ; i<scores.length ; i++) {
-                scores[i].innerHTML = value;
+                scores[i].innerHTML = _self.score;
+            }
+        }
+    }
+
+    _self.pause = function($scoreTarget) {
+
+        if($('.lockedS').length == 1) {
+            $continueEl.removeClass();
+            $continueInfo.addClass('hidden');
+            $continueP.removeClass();
+            $buttonDiv.addClass('hidden');
+            $('#continueBtn').prop('disabled', false);
+        }
+        else {
+            $continueEl.removeClass();
+            $continueInfo.removeClass();
+            $continueP.addClass('hidden');
+            $buttonDiv.addClass('hidden');
+            $('#continueBtn').prop('disabled', true);
+        }
+    }
+    
+    _self.resume = function() {
+        $resultEl.addClass('hidden');
+        $continueEl.addClass('hidden');
+        $buttonDiv.removeClass('hidden');
+        _self.updateCount('reset');
+
+        $('.lockedS').addClass('set');
+
+        for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
+            $dices[i].setAttribute('class', 'dice unlocked');
+            diceNrs[i].innerHTML = '';
+        }
+
+        for (var i=0, ilen=$tableScores.length ; i<ilen; i++) {
+            if(!$tableScores[i].classList.contains('set')) {
+                $tableScores[i].setAttribute('class', 'tableScore');
+                $tableScores[i].innerHTML = '';
             }
         }
     }
@@ -84,25 +153,25 @@ var Game = function() {
             resultText.setAttribute('class', 'red');
         }
         
-        hidden.setAttribute('class', '');
-        $buttonDiv.addClass('hidden');
-        throwBtn.disabled = true;
+        $resultEl.removeClass();
     }
     
     _self.restart = function() {
-        var diceNrs     = document.getElementsByClassName('nr');
-        var $dices      = $('.dice');
-
         _self.updateCount('reset');
         _self.updateScore('reset');
 
-        throwBtn.disabled = false;
-        hidden.setAttribute('class', 'hidden');
+        $resultEl.addClass('hidden');
+        $continueEl.addClass('hidden');
         $buttonDiv.removeClass('hidden');
 
         for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
             $dices[i].setAttribute('class', 'dice unlocked');
             diceNrs[i].innerHTML = '';
+        }
+
+        for (var i=0, ilen=$tableScores.length ; i<ilen; i++) {
+            $tableScores[i].setAttribute('class', 'tableScore');
+            $tableScores[i].innerHTML = '';
         }
     }
 }
@@ -132,7 +201,6 @@ var Dice = function() {
         }
         
         scoreSheet.calculateScores(resultArray);
-        yahtzee.updateScore(total);
     }
 
     _self.lockDice = function(diceID) {
@@ -171,28 +239,21 @@ var ScoreSheet = function() {
     var _self = this;
 
     //get all html score elements
-    var $aces           = $('#aces');
-    var $twos           = $('#twos');
-    var $threes         = $('#threes');
-    var $fours          = $('#fours');
-    var $fives          = $('#fives');
-    var $sixes          = $('#sixes');
-    var $threeOfAKind   = $('#threeOfAKind');
-    var $fourOfAKind    = $('#fourOfAKind');
-    var $fullHouse      = $('#fullHouse');
-    var $smallStraight  = $('#smallStraight');
-    var $largeStraight  = $('#largeStraight');
-    var $yahtzeeThrow   = $('#yahtzee');
-
-    var upperSection    = [$aces, $twos, $threes, $fours, $fives, $sixes];
-    var lowerSection    = [$threeOfAKind, $fourOfAKind, $fullHouse, $smallStraight, $largeStraight, $yahtzeeThrow];
-    var allSections     = [$aces, $twos, $threes, $fours, $fives, $sixes, $threeOfAKind, $fourOfAKind, $fullHouse, $smallStraight, $largeStraight, $yahtzeeThrow];
-    
+    var $allBoxes  = [$('#aces'), $('#twos'), $('#threes'), $('#fours'), $('#fives'), $('#sixes'), $('#threeOfAKind'), $('#fourOfAKind'), $('#fullHouse'), $('#smallStraight'), $('#largeStraight'), $('#yahtzeeBox')];
 
     _self.calculateScores = function(array) {
         var acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult;
         var allResults      = [acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult];
         array               = array.sort();
+
+        for (var i=0 ; i < $allBoxes.length ; i++) {
+            if($allBoxes[i] != '') {
+                if($allBoxes[i].hasClass('set')) {
+                    $allBoxes[i].removeClass('lockedS');
+                    $allBoxes[i] = '';
+                }
+            }
+        }
 
         //collect results
         for(var i=0 ; i < allResults.length ; i++) {
@@ -203,101 +264,113 @@ var ScoreSheet = function() {
         //calculate sum for results and assign sum to html elements
         for(var i=0 ; i < allResults.length ; i++) {
             var tempArray   = allResults[i];
-            var tempElement = upperSection[i];
+            var tempElement = $allBoxes[i];
             var tempSum     = allResults[i].reduce(function(a, b) { return a+b; }, 0);
-            
-            tempElement.html(tempSum);
+
+            if(tempElement != '') {
+                tempElement.html(tempSum);
+            }
         }
 
         // ----------------- LOWER HOUSE ----------------- 
-        // ----------------- 3 OF A KIND
-        // ----------------- 4 OF A KIND
-        // ----------------- FULL HOUSE
-
+        // ----------------- 3 OF A KIND, 4 OF A KIND, FULL HOUSE
         //find duplicates
-        var foundThree  = false;
         var foundTwo    = false;
+        var foundThree  = false;
+        var foundFour   = false;
+        var dupesSum3;
+        var dupesSum4;
 
         for(var i=0 ; i < allResults.length ; i++) {
             var dupesArray  = allResults[i];
-            var dupesSum;
 
             if(dupesArray.length == 2) {
-                foundTwo  = true;
+                foundTwo    = true;
             }
 
             if(dupesArray.length == 3) {
-                dupesSum    = allResults[i].reduce(function(a, b) { return a+b; }, 0);
+                dupesSum3   = dupesArray.reduce(function(a, b) { return a+b; }, 0);
                 foundThree  = true;
-
-                $threeOfAKind.html(dupesSum);
             }
 
             if(dupesArray.length == 4) {
-                dupesSum = allResults[i].reduce(function(a, b) { return a+b; }, 0);
-                $fourOfAKind.html(dupesSum);
+                var tempDupesArray = dupesArray.slice();
+                tempDupesArray.pop();
+                dupesSum3   = tempDupesArray.reduce(function(a, b) { return a+b; }, 0);
+                dupesSum4   = dupesArray.reduce(function(a, b) { return a+b; }, 0);
+                foundThree  = true;
+                foundFour   = true;
             }
         }
 
-        if(foundTwo && foundThree) {
-            $fullHouse.html('25');
+        //if the element is not set, apply shorthand if statements to change the html value to either the result or nothing
+        if($allBoxes[6] != '') {
+            (foundThree) ? $allBoxes[6].html(dupesSum3) : $allBoxes[6].html('');
+        }
+        
+        if($allBoxes[7] != '') {
+            (foundFour) ? $allBoxes[7].html(dupesSum4) : $allBoxes[7].html('');
         }
 
-        // ----------------- SMALL STRAIGHT
-        // ----------------- LARGE STRAIGHT
-        // ----------------- YAHTZEE
-
+        if($allBoxes[8] != '') {
+            (foundTwo && foundThree) ? $allBoxes[8].html('25') : $allBoxes[8].html('');
+        }
+        
+        // ----------------- SMALL STRAIGHT, LARGE STRAIGHT
         //check whether the array contains 4 or 5 unique values that follow each other up
         var straightCount   = 1;
 
-        for(var i=0 ; i < array.length ; i++) {
-            var a = array[i];
-            var b = array[i+1];
+        if((array[0] == 1 && !(array[4] == 6)) || ( !(array[0] == 1) && array[4] == 6)) {
+            for(var i=0 ; i < array.length ; i++) {
+                var a = array[i];
+                var b = array[i+1];
 
-            if(a == (b - 1)) {
-                ++straightCount;
+                if(a == (b - 1)) {
+                    ++straightCount;
+                }
             }
         }
 
-        //check whether the array contains 5 numbers of the same value
-        if(array[0] == array[1] == array[2] == array[3] == array[4]) {
-            $yahtzeeThrow.html('50');
-        }
-        else {
-            $yahtzeeThrow.html('');
+        //shorthand if statements to change score for small and large straights, if the box is not set
+        if($allBoxes[9] != '') {
+            (straightCount >= 4) ? $allBoxes[9].html('30') : $allBoxes[9].html('');
         }
 
-        //change score for small and large straights
-        if(straightCount >= 4) {
-            $smallStraight.html('30');
-        }
-        else {
-            $smallStraight.html('');
+        if($allBoxes[10] != '') {
+            (straightCount == 5) ? $allBoxes[10].html('40') : $allBoxes[10].html('');
         }
 
-        if(straightCount == 5) {
-            $largeStraight.html('40');
+        // ----------------- YAHTZEE
+        // loop through array and check whether all values are equal
+        function identical(array) {
+            for(var i = 0; i < array.length - 1; i++) {
+                if(array[i] !== array[i+1]) {
+                    return false;
+                }
+            }
+            return true;
         }
-        else {
-            $largeStraight.html('');
+
+        //shorthand if statements to assign result to html element, if the box is not set
+        if($allBoxes[11] != '') {
+            (identical(array)) ? $allBoxes[11].html('50') : $allBoxes[11].html('');
         }
+        
     }
 
     _self.lockScore = function(scoreID) {
-        var $scoreTarget = $('#' + scoreID);
-        $scoreTarget.toggleClass('locked');
-    }
+        // remove previously locked scores
+        var $allLockedScores = $('.lockedS')
+        $allLockedScores.removeClass('lockedS');
 
-    _self.empty = function() {
-        //assign empty value to score elements
-        for(var i=0 ; i < allSections.length ; i++) {
-            allSections[i].html('');
-        }
+        var $scoreTarget = $('#' + scoreID);
+        $scoreTarget.toggleClass('lockedS');
+
+        yahtzee.pause($scoreTarget);
+        yahtzee.updateScore($scoreTarget.html());
     }
 
 }
-
-ScoreSheet();
 
 // --------------------------------------- GLOBAL VARIABLES ETC --------------------------------------- 
 
@@ -313,22 +386,26 @@ dice.observable.subscribe(dice.throwCount);
 
 // --------------------------------------- EVENT LISTENERS --------------------------------------- 
 
-var $throwBtn   = $('#throwBtn');
-var $restartBtn = $('#restartBtn');
-var $helpBtn    = $('#helpBtn');
-var $okBtn      = $('#okBtn');
-var $allDices   = $('.dice');
+var $throwBtn       = $('#throwBtn');
+var $continueBtn    = $('#continueBtn');
+var $restartBtn     = $('#restartBtn');
+var $helpBtn        = $('#helpBtn');
+var $okBtn          = $('#okBtn');
+var $allDices       = $('.dice');
 var $diceID;
-var $td         = $('.tableScore');
+var $td             = $('.tableScore');
 var $tdID;
         
 $throwBtn.click(function() {
     dice.observable.publish();
 });
 
+$continueBtn.click(function() {
+    yahtzee.resume();
+});
+
 $restartBtn.click(function() {
     yahtzee.restart();
-    scoreSheet.empty();
 });
 
 $helpBtn.click(function() {
@@ -352,5 +429,4 @@ for(var i=0, ilen=$td.length ; i<ilen ; i++) {
         scoreSheet.lockScore($tdID);
     })
 }
-
 })();
