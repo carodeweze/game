@@ -40,15 +40,11 @@ var Game = function() {
     _self.score     = 0;
     
     // html elements
-    var counter         = document.getElementById('throws');
     var $resultEl       = $('#result');
-    var $continueInfo   = $('#continueInfo');
-    var $continueP      = $('#continueP');
     var $continueEl     = $('#continue');
     var $buttonDiv      = $('#btns');
-    var throwBtn        = document.getElementById('throwBtn');
-    var scores          = document.getElementsByClassName('score');
-    var diceNrs         = document.getElementsByClassName('nr');
+    var $scores         = $('.score');
+    var $diceNrs        = $('.nr');
     var $dices          = $('.dice');
     var $tableScores    = $('.tableScore');
     
@@ -57,7 +53,8 @@ var Game = function() {
             _self.count = 0;
         }
 
-        counter.innerHTML = _self.count;
+        // assign count value to html count element
+        $('#throws').innerHTML = _self.count;
         
         if(_self.count == 3) {
             _self.pause();
@@ -67,8 +64,8 @@ var Game = function() {
     _self.updateScore = function(value) {
         //set all html score elements to 0
         if(value == 'reset') {
-            for (var i=0 ; i<scores.length ; i++) {
-                scores[i].innerHTML = 0;
+            for (var i=0 ; i<$scores.length ; i++) {
+                $scores[i].innerHTML = '0';
             }
         }
         else {
@@ -99,8 +96,8 @@ var Game = function() {
                 _self.score = $('.lockedS').html();
             }
 
-            for (var i=0 ; i<scores.length ; i++) {
-                scores[i].innerHTML = _self.score;
+            for (var i=0 ; i<$scores.length ; i++) {
+                $scores[i].innerHTML = _self.score;
             }
         }
     }
@@ -109,15 +106,15 @@ var Game = function() {
 
         if($('.lockedS').length == 1) {
             $continueEl.removeClass();
-            $continueInfo.addClass('hidden');
-            $continueP.removeClass();
+            $('#continueInfo').addClass('hidden');
+            $('#continueP').removeClass();
             $buttonDiv.addClass('hidden');
             $('#continueBtn').prop('disabled', false);
         }
         else {
             $continueEl.removeClass();
-            $continueInfo.removeClass();
-            $continueP.addClass('hidden');
+            $('#continueInfo').removeClass();
+            $('#continueP').addClass('hidden');
             $buttonDiv.addClass('hidden');
             $('#continueBtn').prop('disabled', true);
         }
@@ -131,9 +128,9 @@ var Game = function() {
 
         $('.lockedS').addClass('set');
 
-        for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
+        for (var i=0, ilen=$diceNrs.length ; i<ilen; i++) {
             $dices[i].setAttribute('class', 'dice unlocked');
-            diceNrs[i].innerHTML = '';
+            $diceNrs[i].innerHTML = '';
         }
 
         for (var i=0, ilen=$tableScores.length ; i<ilen; i++) {
@@ -166,9 +163,11 @@ var Game = function() {
         $continueEl.addClass('hidden');
         $buttonDiv.removeClass('hidden');
 
-        for (var i=0, ilen=diceNrs.length ; i<ilen; i++) {
+        scoreSheet.lockScore('reset');
+
+        for (var i=0, ilen=$diceNrs.length ; i<ilen; i++) {
             $dices[i].setAttribute('class', 'dice unlocked');
-            diceNrs[i].innerHTML = '';
+            $diceNrs[i].innerHTML = '';
         }
 
         for (var i=0, ilen=$tableScores.length ; i<ilen; i++) {
@@ -239,26 +238,30 @@ var Help = function() {
 
 var ScoreSheet = function() {
     var _self = this;
+    var _emptyCount = 0;
 
     //get all html score elements
-    var $allBoxes  = [$('#aces'), $('#twos'), $('#threes'), $('#fours'), $('#fives'), $('#sixes'), $('#threeOfAKind'), $('#fourOfAKind'), $('#fullHouse'), $('#smallStraight'), $('#largeStraight'), $('#yahtzeeBox')];
-
-    
-
-    _self.calculateScores = function(array) {
-        var acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult;
-        var allResults      = [acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult];
-        array               = array.sort();
-
+    _self.getBoxes = function() {
+        var $allBoxesArray  = [$('#aces'), $('#twos'), $('#threes'), $('#fours'), $('#fives'), $('#sixes'), $('#threeOfAKind'), $('#fourOfAKind'), $('#fullHouse'), $('#smallStraight'), $('#largeStraight'), $('#yahtzeeBox')];
+        
         // loop thru array and filter out set slots (so that they don't get recalculated)
-        for (var i=0 ; i < $allBoxes.length ; i++) {
-            if($allBoxes[i] != '') {
-                if($allBoxes[i].hasClass('set')) {
-                    $allBoxes[i].removeClass('lockedS');
-                    $allBoxes[i] = '';
+        for (var i=0 ; i < $allBoxesArray.length ; i++) {
+            if($allBoxesArray[i] != '') {
+                if($allBoxesArray[i].hasClass('set')) {
+                    $allBoxesArray[i].removeClass('lockedS');
+                    $allBoxesArray[i] = '';
                 }
             }
         }
+
+        return $allBoxesArray;
+    }
+    
+    _self.calculateScores = function(array) {
+        var acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult;
+        var allResults      = [acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult];
+        var $allBoxes       = _self.getBoxes();
+        array               = array.sort();
 
         //collect results
         for(var i=0 ; i < allResults.length ; i++) {
@@ -364,28 +367,35 @@ var ScoreSheet = function() {
     }
 
     _self.lockScore = function(scoreID) {
-        // remove previously locked scores
-        var $allLockedScores = $('.lockedS')
-        $allLockedScores.removeClass('lockedS');
+        _emptyCount     = 0;
+        if(scoreID == 'reset') {
+            _emptyCount = 0;
+        }
+        else {
+            // remove previously locked scores
+            
+            var $allLockedScores = $('.lockedS')
+            $allLockedScores.removeClass('lockedS');
 
-        var $scoreTarget = $('#' + scoreID);
-        $scoreTarget.toggleClass('lockedS');
+            var $scoreTarget = $('#' + scoreID);
+            $scoreTarget.toggleClass('lockedS');
 
-        yahtzee.pause($scoreTarget);
-        yahtzee.updateScore($scoreTarget.html());
+            yahtzee.pause($scoreTarget);
+            yahtzee.updateScore($scoreTarget.html());
 
-        // count all empty indexes, if all are empty -> end game
-        var emptyArrayCount = 0;
-        for (var i=0 ; i < $allBoxes.length ; i++) {
-            if($allBoxes[i] == '') {
-                ++emptyArrayCount;
+            // count all empty indexes, if all are empty -> end game
+            var $allBoxes   = _self.getBoxes();
+
+            for (var i=0 ; i < $allBoxes.length ; i++) {
+                if($allBoxes[i] == '') {
+                    ++_emptyCount;
+                    console.log('else: ' + _emptyCount);
+                }
+            }
+            if(_emptyCount==11) {
+                yahtzee.endGame();
             }
         }
-        console.log(emptyArrayCount);
-        if(emptyArrayCount==11) {
-            yahtzee.endGame();
-        }
-
     }
 
 }
