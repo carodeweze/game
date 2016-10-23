@@ -147,13 +147,15 @@ var Game = function() {
     _self.endGame = function() {
         var resultText  = document.querySelector('#result p');
         
-        if(_self.score > 9) {
+        if(_self.score > 99) {
             resultText.setAttribute('class', 'green');
         } else {
             resultText.setAttribute('class', 'red');
         }
         
         $resultEl.removeClass();
+        $buttonDiv.addClass('hidden');
+        $continueEl.addClass('hidden');
     }
     
     _self.restart = function() {
@@ -241,11 +243,14 @@ var ScoreSheet = function() {
     //get all html score elements
     var $allBoxes  = [$('#aces'), $('#twos'), $('#threes'), $('#fours'), $('#fives'), $('#sixes'), $('#threeOfAKind'), $('#fourOfAKind'), $('#fullHouse'), $('#smallStraight'), $('#largeStraight'), $('#yahtzeeBox')];
 
+    
+
     _self.calculateScores = function(array) {
         var acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult;
         var allResults      = [acesResult, twosResult, threesResult, foursResult, fivesResult, sixesResult];
         array               = array.sort();
 
+        // loop thru array and filter out set slots (so that they don't get recalculated)
         for (var i=0 ; i < $allBoxes.length ; i++) {
             if($allBoxes[i] != '') {
                 if($allBoxes[i].hasClass('set')) {
@@ -305,15 +310,15 @@ var ScoreSheet = function() {
 
         //if the element is not set, apply shorthand if statements to change the html value to either the result or nothing
         if($allBoxes[6] != '') {
-            (foundThree) ? $allBoxes[6].html(dupesSum3) : $allBoxes[6].html('');
+            (foundThree) ? $allBoxes[6].html(dupesSum3) : $allBoxes[6].html('0');
         }
         
         if($allBoxes[7] != '') {
-            (foundFour) ? $allBoxes[7].html(dupesSum4) : $allBoxes[7].html('');
+            (foundFour) ? $allBoxes[7].html(dupesSum4) : $allBoxes[7].html('0');
         }
 
         if($allBoxes[8] != '') {
-            (foundTwo && foundThree) ? $allBoxes[8].html('25') : $allBoxes[8].html('');
+            (foundTwo && foundThree) ? $allBoxes[8].html('25') : $allBoxes[8].html('0');
         }
         
         // ----------------- SMALL STRAIGHT, LARGE STRAIGHT
@@ -333,11 +338,11 @@ var ScoreSheet = function() {
 
         //shorthand if statements to change score for small and large straights, if the box is not set
         if($allBoxes[9] != '') {
-            (straightCount >= 4) ? $allBoxes[9].html('30') : $allBoxes[9].html('');
+            (straightCount >= 4) ? $allBoxes[9].html('30') : $allBoxes[9].html('0');
         }
 
         if($allBoxes[10] != '') {
-            (straightCount == 5) ? $allBoxes[10].html('40') : $allBoxes[10].html('');
+            (straightCount == 5) ? $allBoxes[10].html('40') : $allBoxes[10].html('0');
         }
 
         // ----------------- YAHTZEE
@@ -353,7 +358,7 @@ var ScoreSheet = function() {
 
         //shorthand if statements to assign result to html element, if the box is not set
         if($allBoxes[11] != '') {
-            (identical(array)) ? $allBoxes[11].html('50') : $allBoxes[11].html('');
+            (identical(array)) ? $allBoxes[11].html('50') : $allBoxes[11].html('0');
         }
         
     }
@@ -368,6 +373,19 @@ var ScoreSheet = function() {
 
         yahtzee.pause($scoreTarget);
         yahtzee.updateScore($scoreTarget.html());
+
+        // count all empty indexes, if all are empty -> end game
+        var emptyArrayCount = 0;
+        for (var i=0 ; i < $allBoxes.length ; i++) {
+            if($allBoxes[i] == '') {
+                ++emptyArrayCount;
+            }
+        }
+        console.log(emptyArrayCount);
+        if(emptyArrayCount==11) {
+            yahtzee.endGame();
+        }
+
     }
 
 }
@@ -425,8 +443,12 @@ for(var i=0, ilen=$allDices.length ; i<ilen ; i++) {
 
 for(var i=0, ilen=$td.length ; i<ilen ; i++) {
     $td[i].addEventListener('click', function() {
-        $tdID = event.currentTarget.getAttribute('id');
-        scoreSheet.lockScore($tdID);
+        $tdID = event.currentTarget;
+
+        if(!$tdID.classList.contains('set')) {
+            $tdID = $tdID.getAttribute('id');
+            scoreSheet.lockScore($tdID);
+        }
     })
 }
 })();
