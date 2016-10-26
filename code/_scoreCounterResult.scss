@@ -1,0 +1,22 @@
+.container > p {
+    display: inline-block;
+    margin: 2em;
+    padding: 1em;
+    border: 1px solid grey;
+}
+
+#scoreboard {
+    width: 100px;
+}
+
+#countboard {
+    width: 200px;
+}
+
+#result {
+    font-size: 1.5em;
+}
+
+#result button {
+    margin: .5em;
+}

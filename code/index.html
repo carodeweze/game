@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Yahtzee</title>
-    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="yahtzeeStylesheet.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 <body>
@@ -12,8 +12,8 @@
     <div class="container">
         <h1>Yahtzee</h1>
         
-        <p>Score: <span class="score">0</span></p>
-        <p>Number of Throws: <span id="throws">0</span></p>
+        <p id="scoreboard">Score: <span class="score">0</span></p>
+        <p id="countboard">Number of Throws: <span id="throws">0</span></p>
         
         <div id="dice_container">
             <div class="dice unlocked" id="dice1">
