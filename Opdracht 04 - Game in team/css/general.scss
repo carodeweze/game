@@ -1,0 +1,44 @@
+@import 'help';
+@import 'dices';
+@import 'scoresheet';
+@import 'scoreCounterResult';
+
+* {
+    font-family: 'calibri';
+    text-align: center;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.container {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    background-color: lightgray;
+    border: 1px solid grey;
+    padding: 1em;
+    margin: 2em;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.button {
+    @extend button;
+    
+    text-decoration: none;
+    color: black;
+}

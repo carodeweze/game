@@ -1,0 +1,27 @@
+$lockedColor:    lavender;
+
+
+.dice {
+    display: inline-block;
+    padding: 1em;
+    margin: 1em;
+    border: 1px solid grey;
+    width: 125px;
+    height: 150px;
+    cursor: pointer;
+    
+    p {
+        margin: 0 0 .5em 0;
+    }
+    
+    .nr {
+        display: inline-block;
+        width: 75%;
+        height: 75%;
+        font-size: 5em;
+    }
+}
+
+.locked, .lockedS, .set {
+    background-color: $lockedColor;
+}

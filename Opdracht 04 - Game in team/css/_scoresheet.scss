@@ -1,0 +1,23 @@
+$borderlayout:  1px solid grey;
+
+#scoreSheet {
+    border-collapse: collapse;
+    margin: 2em auto 0 auto;
+}
+
+#scoreSheet td {
+    border: $borderlayout;
+    width: 100px;
+    padding: 5px;
+}
+
+#scoreSheet p {
+    font-size: 1.2em;
+    margin: .5em;
+    text-align: left;
+    border-bottom: $borderlayout;
+}
+
+#scoreSheet span {
+    text-align: right;
+}
